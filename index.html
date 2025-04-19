@@ -27,7 +27,7 @@
 </head>
 <body>
 
-  <!-- Start-knop om expliciet te “gestarten” -->
+  <!-- Start-knop om expliciet te starten -->
   <button id="startButton">Start AR‑ervaring</button>
 
   <!-- Status‑meldingen -->
@@ -43,7 +43,7 @@
       uiScanning: #scanning;
       uiError: #error;
       maxTrack: 1;
-      autoStart: false;        /* zet autoStart uit */
+      autoStart: false;
     "
     color-space="sRGB"
     renderer="colorManagement:true, physicallyCorrectLights"
@@ -62,26 +62,23 @@
         position="0 -0.729 0"
         rotation="0 180 0"
         scale="1.177 1.177 1.177"
-        animation-mixer="loop:repeat"
+        animation-mixer="clip: Armature.001|mixamo.com|Layer0; loop: repeat; crossFadeDuration: 0.3"
       ></a-gltf-model>
     </a-entity>
   </a-scene>
 
   <script>
     document.getElementById("startButton").addEventListener("click", async () => {
-      const btn = document.getElementById("startButton");
-      btn.style.display = "none";            // knop verbergen
-      
-      const sceneEl = document.querySelector("#ar-scene");
-      const mindarComp = sceneEl.components["mindar-image"];
-      
+      document.getElementById("startButton").style.display = "none";
+      const mindarComp = document.querySelector("#ar-scene").components["mindar-image"];
       try {
-        mindarComp.start();                  // start AR + camera prompt
+        mindarComp.start();
       } catch(err) {
         document.getElementById("error").style.display = "block";
         console.error(err);
       }
     });
   </script>
+
 </body>
 </html>
