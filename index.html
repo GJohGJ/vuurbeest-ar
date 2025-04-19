@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vuurbeest AR</title>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { position: fixed; top: 0; left: 0; }
+    #loading { position: absolute; top: 10px; left: 10px; color: white; z-index: 10; }
+  </style>
+</head>
+<body>
+  <div id="loading">Vuurbeest laadt...</div>
+
+  <script>
+    import('https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js').then(async ({ MindARThree }) => {
+      const mindarThree = new MindARThree({
+        container: document.body,
+        imageTargetSrc: './vuurbeest.mind'
+      });
+
+      const { renderer, scene, camera } = mindarThree;
+
+      renderer.outputEncoding = THREE.sRGBEncoding;
+
+      const anchor = mindarThree.addAnchor(0);
+      const gltfLoader = new THREE.GLTFLoader();
+
+      let mixer;
+      const clock = new THREE.Clock();
+
+      gltfLoader.load('./vuurbeest.glb', (gltf) => {
+        const model = gltf.scene;
+        const animations = gltf.animations;
+        mixer = new THREE.AnimationMixer(model);
+
+        model.scale.set(0.5, 0.5, 0.5);
+        model.position.set(0, 0, 0);
+
+        model.traverse((node) => {
+          if (node.name.toLowerCase().includes('occlusion')) {
+            node.material = new THREE.MeshBasicMaterial({ colorWrite: false });
+            node.renderOrder = 0;
+          } else {
+            node.renderOrder = 1;
+          }
+        });
+
+        animations.forEach((clip) => mixer.clipAction(clip).play());
+
+        anchor.group.add(model);
+        document.getElementById('loading').style.display = 'none';
+      });
+
+      await mindarThree.start();
+
+      renderer.setAnimationLoop(() => {
+        const delta = clock.getDelta();
+        if (mixer) mixer.update(delta);
+        renderer.render(scene, camera);
+      });
+    });
+  </script>
+</body>
+</html>
