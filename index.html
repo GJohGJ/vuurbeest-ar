@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- A-Frame core -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <!-- A-Frame Extras voor animation-mixer -->
+  <!-- A-Frame Extras voor animation‑mixer -->
   <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
   <!-- MindAR A-Frame plugin -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -30,7 +30,7 @@
 </head>
 <body>
 
-  <!-- Startknop voor expliciete AR‑start -->
+  <!-- Start-knop voor expliciete AR‑start -->
   <button id="startButton">Start AR‑ervaring</button>
 
   <!-- Statusmeldingen -->
@@ -61,7 +61,7 @@
     <!-- Statische camera -->
     <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-    <!-- Je 3D-model met de juiste clip, positie en schaal -->
+    <!-- Je 3D-model met animatieclip, positie en schaal -->
     <a-entity mindar-image-target="targetIndex: 0">
       <a-gltf-model
         id="vuurmodelEntity"
@@ -80,7 +80,7 @@
       document.getElementById("startButton").style.display = "none";
       const sceneEl = document.querySelector("#ar-scene");
       try {
-        // Start de AR-engine via het MindAR-system
+        // Start de AR-engine via het mindar-image system
         await sceneEl.systems["mindar-image"].start();
       } catch (err) {
         document.getElementById("error").style.display = "block";
