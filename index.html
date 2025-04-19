@@ -1,51 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Vuurbeest AR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.js"></script>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { position: fixed; top: 0; left: 0; }
-    #loading { position: absolute; top: 10px; left: 10px; color: white; z-index: 10; }
-  </style>
-</head>
-<body>
-  <div id="loading">Vuurbeest wordt geladen...</div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vuurbeest AR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      canvas { position: fixed; top: 0; left: 0; }
+      #loading {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        z-index: 10;
+        font-family: sans-serif;
+        background-color: rgba(0,0,0,0.5);
+        padding: 10px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">Vuurbeest wordt geladen… Geef toestemming voor camera.</div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const mindarThree = new window.MINDAR.IMAGE.MindARThree({
-        container: document.body,
-        imageTargetSrc: './vuurbeest.mind'
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const mindarThree = new window.MINDAR.IMAGE.MindARThree({
+            container: document.body,
+            imageTargetSrc: "./vuurbeest.mind",
+            maxTrack: 1,
+            filterMinCF: 0.01,
+            filterBeta: 5
+          });
+
+          const { renderer, scene, camera } = mindarThree;
+          const anchor = mindarThree.addAnchor(0);
+          const loader = new THREE.GLTFLoader();
+          const clock = new THREE.Clock();
+          let mixer;
+
+          loader.load("./vuurbeest.glb", (gltf) => {
+            const model = gltf.scene;
+            mixer = new THREE.AnimationMixer(model);
+            gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
+            model.scale.set(0.5, 0.5, 0.5);
+            anchor.group.add(model);
+            document.getElementById("loading").style.display = "none";
+          });
+
+          await mindarThree.start();
+
+          renderer.setAnimationLoop(() => {
+            const delta = clock.getDelta();
+            if (mixer) mixer.update(delta);
+            renderer.render(scene, camera);
+          });
+        } catch (e) {
+          document.getElementById("loading").innerText =
+            "Camera openen mislukt. Sta toegang toe of herlaad de pagina.";
+          console.error("AR start fout:", e);
+        }
       });
-
-      const { renderer, scene, camera } = mindarThree;
-      const anchor = mindarThree.addAnchor(0);
-      const loader = new THREE.GLTFLoader();
-      const clock = new THREE.Clock();
-      let mixer;
-
-      loader.load('./vuurbeest.glb', (gltf) => {
-        const model = gltf.scene;
-        mixer = new THREE.AnimationMixer(model);
-        gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
-        model.scale.set(0.5, 0.5, 0.5);
-        anchor.group.add(model);
-        document.getElementById("loading").style.display = "none";
-      });
-
-      await mindarThree.start();
-
-      renderer.setAnimationLoop(() => {
-        const delta = clock.getDelta();
-        if (mixer) mixer.update(delta);
-        renderer.render(scene, camera);
-      });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
