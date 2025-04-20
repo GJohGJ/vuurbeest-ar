@@ -7,30 +7,39 @@
 
   <!-- 1) A‑Frame core -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <!-- 2) A‑Frame Extras (animation-mixer) -->
-  <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.5.0/dist/aframe-extras.loaders.min.js"></script>
+  <!-- 2) A‑Frame Extras (voor animation-mixer) -->
+  <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.5.0/dist/aframe-extras.min.js"></script>
   <!-- 3) MindAR A‑Frame plugin -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
+    /* Zorg dat html/body geen zwarte achtergrond tonen */
     html, body {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      overflow: hidden; background: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: none;
     }
-    /* Transparant canvas zodat achtergrond (video‑feed) zichtbaar is */
+    /* Maak de A-Frame canvas transparant zodat de camera erachter zichtbaar is */
     a-scene,
     a-scene canvas {
-      position: absolute; top: 0; left: 0;
+      position: absolute;
+      top: 0; left: 0;
       width: 100%; height: 100%;
       background: transparent !important;
     }
     /* Status‑UI */
     #loading, #scanning, #error {
-      position: absolute; top: 10px; left: 10px;
-      padding: 8px 12px; border-radius: 4px;
-      font-family: sans-serif; color: white;
-      background: rgba(0,0,0,0.6); z-index: 10;
+      position: absolute;
+      top: 10px; left: 10px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: sans-serif;
+      color: white;
+      background: rgba(0,0,0,0.6);
+      z-index: 10;
     }
   </style>
 </head>
@@ -43,7 +52,6 @@
 
   <!-- A-Frame scène met MindAR Image Tracking -->
   <a-scene
-    embedded
     mindar-image="
       imageTargetSrc: ./vuurbeest.mind;
       uiLoading: #loading;
@@ -52,12 +60,14 @@
       maxTrack: 1;
       autoStart: true;
     "
+    embedded
     color-space="sRGB"
     renderer="colorManagement:true, physicallyCorrectLights"
     vr-mode-ui="enabled:false"
     device-orientation-permission-ui="enabled:false"
   >
 
+    <!-- Laad je GLB -->
     <a-assets>
       <a-asset-item id="vuurmodel" src="./vuurbeest.glb"></a-asset-item>
     </a-assets>
@@ -65,31 +75,26 @@
     <!-- Statische camera -->
     <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-    <!-- Container met alle transforms -->
-    <a-entity
-      mindar-image-target="targetIndex: 0"
-      position="0 0 -50"     <!-- X: links/rechts, Y: hoogte, Z: diepte tov marker -->
-      rotation="0 0 0"         <!-- draai groep 180° rond Y-as om frontaal te tonen -->
-      scale="1 1 1"   <!-- schaalfactor voor 1,50 m model ten opzichte van marker -->
-    >
+    <!-- 3D-model met animatieclip, positie en schaal -->
+    <a-entity mindar-image-target="targetIndex: 0">
       <a-gltf-model
         id="vuurmodelEntity"
         src="#vuurmodel"
+        position="0 -0.141 0"
+        rotation="0 180 0"
+        scale="1.177 1.177 1.177"
         animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
       ></a-gltf-model>
     </a-entity>
 
   </a-scene>
 
-  <!-- Debug: log clip‑namen -->
+  <!-- Debug: log clip-namen in console -->
   <script>
     document
       .querySelector('#vuurmodelEntity')
       .addEventListener('model-loaded', ({ detail }) => {
-        console.log(
-          'Beschikbare animatieclips:',
-          detail.model.animations.map(a => a.name)
-        );
+        console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
       });
   </script>
 
