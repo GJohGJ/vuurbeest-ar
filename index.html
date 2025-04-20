@@ -38,19 +38,6 @@
       background: rgba(0,0,0,0.6);
       z-index: 10;
     }
-    /* Target the VR button more aggressively */
-    a-scene .a-enter-vr,
-    a-scene [class*='ar-button'],
-    a-scene [class*='vr-button'],
-    a-scene button[title="Enter VR"],
-    a-scene button[title="Enter AR"] {
-      display: none !important;
-    }
-    /* Target any button in the lower-right corner */
-    a-scene div[style*="position: absolute"][style*="bottom"][style*="right"],
-    a-scene button[style*="position: absolute"][style*="bottom"][style*="right"] {
-      display: none !important;
-    }
   </style>
 </head>
 <body>
@@ -71,7 +58,7 @@
     embedded
     color-space="sRGB"
     renderer="colorManagement:true, physicallyCorrectLights"
-    vr-mode-ui="enabled:false"
+    xr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled:false"
   >
     <a-assets>
@@ -93,53 +80,11 @@
   </a-scene>
 
   <script>
-    const loadingEl = document.getElementById('loading');
-    const modelEl = document.querySelector('#vuurmodelEntity');
-    const sceneEl = document.querySelector('a-scene');
-
-    let isModelLoaded = false;
-    let isARReady = false;
-
-    // Function to check if both conditions are met to hide the loading message
-    function checkAndHideLoading() {
-      if (isModelLoaded && isARReady) {
-        loadingEl.style.display = 'none';
-      }
-    }
-
-    // Listen for model-loaded event
-    modelEl.addEventListener('model-loaded', ({ detail }) => {
-      console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
-      isModelLoaded = true;
-      checkAndHideLoading();
-    });
-
-    // Listen for arReady event
-    sceneEl.addEventListener('arReady', () => {
-      isARReady = true;
-      checkAndHideLoading();
-    });
-
-    // Fallback: If model fails to load within a timeout, hide loading anyway
-    setTimeout(() => {
-      loadingEl.style.display = 'none';
-    }, 10000); // 10 seconds timeout
-
-    // JavaScript to remove the VR/AR button
-    sceneEl.addEventListener('loaded', () => {
-      // Target buttons with specific attributes or text
-      const buttons = document.querySelectorAll('a-scene button');
-      buttons.forEach(button => {
-        if (button.textContent.includes('VR') || button.textContent.includes('AR') || 
-            button.getAttribute('title')?.includes('VR') || button.getAttribute('title')?.includes('AR')) {
-          button.remove();
-        }
+    document
+      .querySelector('#vuurmodelEntity')
+      .addEventListener('model-loaded', ({ detail }) => {
+        console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
       });
-
-      // Target any element in the lower-right corner
-      const lowerRightElements = document.querySelectorAll('a-scene [style*="position: absolute"][style*="bottom"][style*="right"]');
-      lowerRightElements.forEach(element => element.remove());
-    });
   </script>
 
 </body>
