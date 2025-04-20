@@ -38,6 +38,10 @@
       background: rgba(0,0,0,0.6);
       z-index: 10;
     }
+    /* Hide the VR button */
+    .a-enter-vr {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -112,8 +116,13 @@
       loadingEl.style.display = 'none';
     }, 10000); // 10 seconds timeout
 
-    // Explicitly disable VR mode UI to ensure the VR button is removed
-    sceneEl.setAttribute('vr-mode-ui', 'enabled', false);
+    // Remove VR button via JavaScript as a fallback
+    sceneEl.addEventListener('loaded', () => {
+      const vrButton = document.querySelector('.a-enter-vr');
+      if (vrButton) {
+        vrButton.remove();
+      }
+    });
   </script>
 
 </body>
