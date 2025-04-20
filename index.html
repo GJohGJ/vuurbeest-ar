@@ -39,7 +39,8 @@
       maxTrack: 1;
       autoStart: true;
     "
-    embedded                                    <!-- belangrijk voor live camera-achtergrond -->
+    embedded
+    arjs="sourceType: webcam; videoTexture: true;"
     color-space="sRGB"
     renderer="colorManagement:true, physicallyCorrectLights"
     vr-mode-ui="enabled:false"
@@ -59,9 +60,9 @@
       <a-gltf-model
         id="vuurmodelEntity"
         src="#vuurmodel"
-        position="0 -0.141 0"        <!-- pas hier Y (hoogte) en Z (diepte) aan -->
-        rotation="0 0 0"              <!-- voorkant naar camera; als je anders wilt, verander Y-rotatie -->
-        scale="1.177 1.177 1.177"     <!-- pas deze factor aan om grotere/kleinere weergave te krijgen -->
+        position="0 -0.141 0"        <!-- Pas hier Y (hoogte) en Z (diepte) aan -->
+        rotation="0 180 0"           <!-- Draai 180 graden rond Y-as om naar de camera te kijken -->
+        scale="1.177 1.177 1.177"    <!-- Pas deze factor aan om grotere/kleinere weergave te krijgen -->
         animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
       ></a-gltf-model>
     </a-entity>
