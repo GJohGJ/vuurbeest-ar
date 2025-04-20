@@ -75,16 +75,15 @@
     <!-- Statische camera -->
     <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-    <!-- 3D-model met animatieclip, positie en schaal -->
+    <!-- 3D-model met animatieclip in een wrapper om rotatie toe te passen -->
     <a-entity mindar-image-target="targetIndex: 0">
-      <a-gltf-model
-        id="vuurmodelEntity"
-        src="#vuurmodel"
-        position="0 -0.141 0"
-        rotation="0 0 0"
-        scale="1.177 1.177 1.177"
-        animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
-      ></a-gltf-model>
+      <a-entity id="model-wrapper" position="0 -0.141 0" rotation="0 0 0" scale="1.177 1.177 1.177">
+        <a-gltf-model
+          id="vuurmodelEntity"
+          src="#vuurmodel"
+          animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
+        ></a-gltf-model>
+      </a-entity>
     </a-entity>
 
   </a-scene>
