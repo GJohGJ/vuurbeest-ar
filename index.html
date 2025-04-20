@@ -82,17 +82,38 @@
   <script>
     const loadingEl = document.getElementById('loading');
     const modelEl = document.querySelector('#vuurmodelEntity');
+    const sceneEl = document.querySelector('a-scene');
 
-    // Zodra het model geladen is, verberg de loading tekst
+    let isModelLoaded = false;
+    let isARReady = false;
+
+    // Function to check if both conditions are met to hide the loading message
+    function checkAndHideLoading() {
+      if (isModelLoaded && isARReady) {
+        loadingEl.style.display = 'none';
+      }
+    }
+
+    // Listen for model-loaded event
     modelEl.addEventListener('model-loaded', ({ detail }) => {
       console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
-      loadingEl.style.display = 'none';
+      isModelLoaded = true;
+      checkAndHideLoading();
     });
 
-    // Extra fallback: verberg loading als tracking begint
-    AFRAME.scenes[0].addEventListener('targetFound', () => {
-      loadingEl.style.display = 'none';
+    // Listen for arReady event
+    sceneEl.addEventListener('arReady', () => {
+      isARReady = true;
+      checkAndHideLoading();
     });
+
+    // Fallback: If model fails to load within a timeout, hide loading anyway
+    setTimeout(() => {
+      loadingEl.style.display = 'none';
+    }, 10000); // 10 seconds timeout
+
+    // Explicitly disable VR mode UI to ensure the VR button is removed
+    sceneEl.setAttribute('vr-mode-ui', 'enabled', false);
   </script>
 
 </body>
