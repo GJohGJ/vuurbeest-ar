@@ -38,8 +38,17 @@
       background: rgba(0,0,0,0.6);
       z-index: 10;
     }
-    /* Hide the VR button */
-    .a-enter-vr {
+    /* Target the VR button more aggressively */
+    a-scene .a-enter-vr,
+    a-scene [class*='ar-button'],
+    a-scene [class*='vr-button'],
+    a-scene button[title="Enter VR"],
+    a-scene button[title="Enter AR"] {
+      display: none !important;
+    }
+    /* Target any button in the lower-right corner */
+    a-scene div[style*="position: absolute"][style*="bottom"][style*="right"],
+    a-scene button[style*="position: absolute"][style*="bottom"][style*="right"] {
       display: none !important;
     }
   </style>
@@ -116,12 +125,20 @@
       loadingEl.style.display = 'none';
     }, 10000); // 10 seconds timeout
 
-    // Remove VR button via JavaScript as a fallback
+    // JavaScript to remove the VR/AR button
     sceneEl.addEventListener('loaded', () => {
-      const vrButton = document.querySelector('.a-enter-vr');
-      if (vrButton) {
-        vrButton.remove();
-      }
+      // Target buttons with specific attributes or text
+      const buttons = document.querySelectorAll('a-scene button');
+      buttons.forEach(button => {
+        if (button.textContent.includes('VR') || button.textContent.includes('AR') || 
+            button.getAttribute('title')?.includes('VR') || button.getAttribute('title')?.includes('AR')) {
+          button.remove();
+        }
+      });
+
+      // Target any element in the lower-right corner
+      const lowerRightElements = document.querySelectorAll('a-scene [style*="position: absolute"][style*="bottom"][style*="right"]');
+      lowerRightElements.forEach(element => element.remove());
     });
   </script>
 
