@@ -83,13 +83,14 @@
     const loadingEl = document.getElementById('loading');
     const modelEl = document.querySelector('#vuurmodelEntity');
 
+    // Zodra het model geladen is, verberg de loading tekst
     modelEl.addEventListener('model-loaded', ({ detail }) => {
       console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
       loadingEl.style.display = 'none';
     });
 
-    // Verberg "loading" ook bij tracking-start fallback
-    document.querySelector('a-scene').addEventListener('arReady', () => {
+    // Extra fallback: verberg loading als tracking begint
+    AFRAME.scenes[0].addEventListener('targetFound', () => {
       loadingEl.style.display = 'none';
     });
   </script>
