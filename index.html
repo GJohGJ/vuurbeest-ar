@@ -29,7 +29,7 @@
   <div id="scanning" style="display:none">Richt je camera op het schilderij…</div>
   <div id="error"    style="display:none">Er ging iets mis. Herlaad de pagina.</div>
 
-  <!-- A-Frame scene met MindAR Image Tracking -->
+  <!-- A-Frame scène met MindAR Image Tracking -->
   <a-scene
     mindar-image="
       imageTargetSrc: ./vuurbeest.mind;
@@ -40,7 +40,6 @@
       autoStart: true;
     "
     embedded
-    arjs="sourceType: webcam; videoTexture: true;"
     color-space="sRGB"
     renderer="colorManagement:true, physicallyCorrectLights"
     vr-mode-ui="enabled:false"
@@ -60,9 +59,9 @@
       <a-gltf-model
         id="vuurmodelEntity"
         src="#vuurmodel"
-        position="0 -0.141 0"        <!-- Pas hier Y (hoogte) en Z (diepte) aan -->
-        rotation="0 180 0"           <!-- Draai 180 graden rond Y-as om naar de camera te kijken -->
-        scale="1.177 1.177 1.177"    <!-- Pas deze factor aan om grotere/kleinere weergave te krijgen -->
+        position="0 -0.141 0"        <!-- Y = hoogte, Z = diepte (pas Z aan als je model voor/achter marker wilt) -->
+        rotation="0 0 0"              <!-- zonder 180° zodat de voorkant naar je toe kijkt -->
+        scale="1.177 1.177 1.177"     <!-- schaalfactor; verhoog/verlaag voor grotere/kleinere weergave -->
         animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
       ></a-gltf-model>
     </a-entity>
@@ -74,7 +73,10 @@
     document
       .querySelector('#vuurmodelEntity')
       .addEventListener('model-loaded', ({ detail }) => {
-        console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
+        console.log(
+          'Beschikbare animatieclips:',
+          detail.model.animations.map(a => a.name)
+        );
       });
   </script>
 
