@@ -80,11 +80,13 @@
   </a-scene>
 
   <script>
-    document
-      .querySelector('#vuurmodelEntity')
-      .addEventListener('model-loaded', ({ detail }) => {
-        console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
-      });
+    const loadingEl = document.getElementById('loading');
+    const modelEl = document.querySelector('#vuurmodelEntity');
+
+    modelEl.addEventListener('model-loaded', ({ detail }) => {
+      console.log('Beschikbare animatieclips:', detail.model.animations.map(a => a.name));
+      loadingEl.style.display = 'none';
+    });
   </script>
 
 </body>
