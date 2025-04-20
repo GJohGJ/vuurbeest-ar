@@ -15,13 +15,20 @@
       font-family:sans-serif; color:white;
       background:rgba(0,0,0,0.6); z-index:10;
     }
+    /* Verberg ongewenste UI-elementen in scanning */
+    #scanning * {
+      display: none !important;
+    }
+    #scanning::before {
+      content: 'Richt je camera op het schilderij…';
+    }
   </style>
 </head>
 <body>
 
   <!-- UI voor status -->
   <div id="loading">AR laden… even geduld</div>
-  <div id="scanning" style="display:none">Richt je camera op het schilderij…</div>
+  <div id="scanning" style="display:none"></div>
   <div id="error" style="display:none">Er ging iets mis. Herlaad de pagina.</div>
 
   <!-- A-Frame scene met MindAR Image Tracking -->
@@ -51,9 +58,9 @@
       <a-gltf-model
         src="#vuurmodel"
         position="0 -0.141 0"        <!-- voeten op onderkant marker -->
-        rotation="0 180 0"            <!-- naar kijker toe draaien -->
-        scale="1.177 1.177 1.177"      <!-- 1,50 m model in 0,85 m brede marker -->
-        animation-mixer="loop: repeat" <!-- animatie draait continu -->
+        rotation="0 180 0"           <!-- naar kijker toe draaien -->
+        scale="1.177 1.177 1.177"    <!-- 1,50 m model in 0,85 m brede marker -->
+        animation-mixer="clip: vuurbeest; loop: repeat" <!-- expliciete animatie -->
       ></a-gltf-model>
     </a-entity>
 
