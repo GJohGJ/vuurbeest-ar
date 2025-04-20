@@ -2,12 +2,14 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <title>Vuurbeest AR - Tweaker</title>
+  <title>Vuurbeest AR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- A-Frame en plugins -->
+  <!-- 1) A‑Frame core -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <!-- 2) A‑Frame Extras (animation-mixer) -->
   <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.5.0/dist/aframe-extras.loaders.min.js"></script>
+  <!-- 3) MindAR A‑Frame plugin -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
@@ -16,36 +18,30 @@
       width: 100%; height: 100%;
       overflow: hidden; background: none;
     }
-    a-scene, a-scene canvas {
+    /* Transparant canvas zodat achtergrond (video‑feed) zichtbaar is */
+    a-scene,
+    a-scene canvas {
       position: absolute; top: 0; left: 0;
       width: 100%; height: 100%;
       background: transparent !important;
     }
-    #ui {
-      position: fixed; bottom: 10px; left: 10px;
-      background: rgba(0,0,0,0.6); color: white;
-      padding: 10px; border-radius: 8px;
-      font-family: sans-serif; z-index: 9999;
+    /* Status‑UI */
+    #loading, #scanning, #error {
+      position: absolute; top: 10px; left: 10px;
+      padding: 8px 12px; border-radius: 4px;
+      font-family: sans-serif; color: white;
+      background: rgba(0,0,0,0.6); z-index: 10;
     }
-    #ui label { display: block; margin-top: 4px; }
-    #ui input { width: 120px; }
   </style>
 </head>
 <body>
 
+  <!-- Statusmeldingen -->
   <div id="loading">AR laden… even geduld</div>
   <div id="scanning" style="display:none">Richt je camera op het schilderij…</div>
-  <div id="error" style="display:none">Er ging iets mis. Herlaad de pagina.</div>
+  <div id="error"    style="display:none">Er ging iets mis. Herlaad de pagina.</div>
 
-  <!-- Tweaker UI -->
-  <div id="ui">
-    <label>Positie Y: <input type="range" id="posY" min="-2" max="2" step="0.01" value="-0.5"></label>
-    <label>Positie Z: <input type="range" id="posZ" min="-2" max="2" step="0.01" value="0.2"></label>
-    <label>Scale: <input type="range" id="scale" min="0.1" max="5" step="0.01" value="1.4"></label>
-    <label>Rotatie Y: <input type="range" id="rotY" min="0" max="360" step="1" value="180"></label>
-    <button onclick="logCurrent()">📋 Log waardes</button>
-  </div>
-
+  <!-- A-Frame scène met MindAR Image Tracking -->
   <a-scene
     embedded
     mindar-image="
@@ -61,46 +57,43 @@
     vr-mode-ui="enabled:false"
     device-orientation-permission-ui="enabled:false"
   >
+
     <a-assets>
       <a-asset-item id="vuurmodel" src="./vuurbeest.glb"></a-asset-item>
     </a-assets>
 
+    <!-- Statische camera -->
     <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
+    <!-- Target entity met wrapper erbinnen -->
     <a-entity mindar-image-target="targetIndex: 0">
-      <a-entity id="model-wrapper" position="0 -0.5 0.2" rotation="0 180 0" scale="1.4 1.4 1.4">
-        <a-gltf-model id="vuurmodelEntity" src="#vuurmodel" animation-mixer="clip: vuurbeest; loop: repeat"></a-gltf-model>
+      <!-- Wrapper met transforms -->
+      <a-entity
+        id="model-wrapper"
+        position="0 -0.5 0.2"
+        rotation="0 180 0"
+        scale="1.4 1.4 1.4"
+      >
+        <a-gltf-model
+          id="vuurmodelEntity"
+          src="#vuurmodel"
+          animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
+        ></a-gltf-model>
       </a-entity>
     </a-entity>
+
   </a-scene>
 
+  <!-- Debug: log clip‑namen -->
   <script>
-    const wrapper = document.getElementById('model-wrapper');
-
-    function updateTransform() {
-      const y = parseFloat(document.getElementById('posY').value);
-      const z = parseFloat(document.getElementById('posZ').value);
-      const s = parseFloat(document.getElementById('scale').value);
-      const r = parseFloat(document.getElementById('rotY').value);
-
-      wrapper.setAttribute('position', `0 ${y} ${z}`);
-      wrapper.setAttribute('rotation', `0 ${r} 0`);
-      wrapper.setAttribute('scale', `${s} ${s} ${s}`);
-    }
-
-    function logCurrent() {
-      const p = wrapper.getAttribute('position');
-      const r = wrapper.getAttribute('rotation');
-      const s = wrapper.getAttribute('scale');
-      console.log(`position="${p.x} ${p.y} ${p.z}"`);
-      console.log(`rotation="${r.x} ${r.y} ${r.z}"`);
-      console.log(`scale="${s.x} ${s.y} ${s.z}"`);
-    }
-
-    // Event listeners
-    ['posY', 'posZ', 'scale', 'rotY'].forEach(id => {
-      document.getElementById(id).addEventListener('input', updateTransform);
-    });
+    document
+      .querySelector('#vuurmodelEntity')
+      .addEventListener('model-loaded', ({ detail }) => {
+        console.log(
+          'Beschikbare animatieclips:',
+          detail.model.animations.map(a => a.name)
+        );
+      });
   </script>
 
 </body>
