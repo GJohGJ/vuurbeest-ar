@@ -65,21 +65,18 @@
     <!-- Statische camera -->
     <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-    <!-- Target entity met wrapper erbinnen -->
-    <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Wrapper met transforms -->
-      <a-entity
-        id="model-wrapper"
-        position="0 -0.5 0.2"
-        rotation="0 0 0"
-        scale="5000 5000 5000"
-      >
-        <a-gltf-model
-          id="vuurmodelEntity"
-          src="#vuurmodel"
-          animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
-        ></a-gltf-model>
-      </a-entity>
+    <!-- Container met alle transforms -->
+    <a-entity
+      mindar-image-target="targetIndex: 0"
+      position="0 0.2 0"     <!-- X: links/rechts, Y: hoogte, Z: diepte tov marker -->
+      rotation="0 0 0"         <!-- draai groep 180° rond Y-as om frontaal te tonen -->
+      scale="5 5 5"   <!-- schaalfactor voor 1,50 m model ten opzichte van marker -->
+    >
+      <a-gltf-model
+        id="vuurmodelEntity"
+        src="#vuurmodel"
+        animation-mixer="clip: vuurbeest; loop: repeat; crossFadeDuration: 0.3"
+      ></a-gltf-model>
     </a-entity>
 
   </a-scene>
