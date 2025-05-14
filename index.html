@@ -33,8 +33,11 @@
       uiError: #error;
       maxTrack: 1;
       autoStart: true;
-      filterMinCF: 0.1;   <!-- smoother -->
-      filterBeta: 10;      <!-- keeps lag low -->
+      filterMinCF: 0.00005;   <!-- smoother -->
+      filterBeta: 0.0075;      <!-- keeps lag low -->
+      warmupTolerance: 3;
+      missTolerance: 3;
+      
     "
     embedded
     color-space="sRGB"
